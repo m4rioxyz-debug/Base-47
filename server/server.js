@@ -12,6 +12,11 @@ app.use(express.json());
 const clientDistPath = path.join(__dirname, '../client/dist');
 app.use(express.static(clientDistPath));
 
+// Add wildcard route for SPA support
+app.get('*', (req, res) => {
+  res.sendFile(path.join(clientDistPath, 'index.html'));
+});
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
@@ -60,15 +65,10 @@ io.on('connection', (socket) => {
 
     const nameKey = user.toLowerCase();
     
-    // Lightweight Auth check
-    if (userStore.has(nameKey)) {
-      if (userStore.get(nameKey).password !== (password || '')) {
-        return socket.emit('error', 'Incorrect password for this Display Name.');
-      }
-    } else {
+    // Automatically register or fetch user WITHOUT password check
+    if (!userStore.has(nameKey)) {
       const isFirst = userStore.size === 0;
       userStore.set(nameKey, {
-        password: password || '',
         role: isFirst ? 'admin' : 'member',
         avatar: null
       });

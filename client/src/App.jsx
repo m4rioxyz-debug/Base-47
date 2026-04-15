@@ -91,10 +91,10 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <Sidebar 
-        room={room} 
-        user={user} 
-        onLogout={handleLogout} 
+      <Sidebar
+        room={room}
+        user={user}
+        onLogout={handleLogout}
         isConnected={isConnected}
         isOpen={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -104,16 +104,16 @@ export default function App() {
       />
       {socket && (
         <>
-          <ChatPanel 
-            socket={socket} 
-            user={user} 
-            room={room} 
+          <ChatPanel
+            socket={socket}
+            user={user}
+            room={room}
             onToggleSidebar={toggleSidebar}
           />
-          <MembersPanel 
-            users={roomUsers} 
-            currentUser={user} 
-            speakingPeers={speakingPeers} 
+          <MembersPanel
+            users={roomUsers}
+            currentUser={user}
+            speakingPeers={speakingPeers}
           />
         </>
       )}

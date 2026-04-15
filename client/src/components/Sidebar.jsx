@@ -1,11 +1,27 @@
-import React, { useState, useRef } from 'react';
-import { Hash, LogOut, Settings, X, Volume2, Upload, Trash2 } from 'lucide-react';
+import { Hash, LogOut, Settings, X, Volume2, Upload, Trash2, Download } from 'lucide-react';
 import VoiceManager from './VoiceManager';
 import './Sidebar.css';
 
 export default function Sidebar({ room, user, onLogout, isConnected, isOpen, onClose, socket, onSpeakingChange, myProfile }) {
   const [currentVoiceRoom, setCurrentVoiceRoom] = useState(null);
+  const [installPrompt, setInstallPrompt] = useState(null);
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setInstallPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === 'accepted') setInstallPrompt(null);
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

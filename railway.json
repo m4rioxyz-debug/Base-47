@@ -4,7 +4,8 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "cd server && npm install && npm start",
+    "buildCommand": "npm install && npm run build:client && cd server && npm install",
+    "startCommand": "node server/server.js",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }
