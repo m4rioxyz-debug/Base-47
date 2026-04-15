@@ -209,14 +209,31 @@ export default function useWebRTC(socket, currentVoiceRoom) {
     };
 
     pc.ontrack = (event) => {
+      // Ensure we have a stream even if the browser doesn't provide one directly
+      const remoteStream = event.streams[0] || new MediaStream([event.track]);
+      
       setPeers(prev => ({
         ...prev,
         [targetSocketId]: {
           user: targetUser,
-          stream: event.streams[0],
+          stream: remoteStream,
           volume: 1.0,
         }
       }));
+    };
+
+    pc.onnegotiationneeded = async () => {
+      try {
+        if (initiator) {
+          await pc.setLocalDescription();
+          socket.emit('voice_signal', {
+            targetSocketId,
+            signalData: pc.localDescription
+          });
+        }
+      } catch (err) {
+        console.error("Negotiation error:", err);
+      }
     };
 
     // If initiator, send offer
