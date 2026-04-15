@@ -34,8 +34,8 @@ export default function Login({ onJoin }) {
     <div className="login-container">
       <div className="login-card">
         <div className="login-header">
-          <div className="icon-wrapper">
-            <MessageSquare size={32} color="var(--text-primary)" />
+          <div className="logo-wrapper">
+            <img src="/logo47.png" alt="Base 47 Logo" className="login-logo" />
           </div>
           <h2>Base 47</h2>
           <p>{step === 1 ? "Start by picking a name" : `Welcome, ${name}!`}</p>

@@ -23,16 +23,23 @@
   margin-bottom: 24px;
 }
 
-.icon-wrapper {
+.logo-wrapper {
   background-color: var(--accent);
-  width: 64px;
-  height: 64px;
-  border-radius: 16px;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.3);
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(88, 101, 242, 0.4);
+}
+
+.login-logo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .login-header h2 {
