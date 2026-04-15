@@ -81,6 +81,9 @@ export default function VoiceManager({ socket, voiceRoom, onDisconnect, onSpeaki
           <button className={`icon-btn ${isMuted && !pushToTalkActive ? 'muted' : ''}`} onClick={toggleMute} title="Toggle Mute (V for PushToTalk)">
             {isMuted && !pushToTalkActive ? <MicOff size={18} /> : <Mic size={18} />}
           </button>
+          <button className="icon-btn" onClick={() => { onDisconnect(); setTimeout(() => socket.emit('join_voice', voiceRoom), 100); }} title="Force Reset Voice">
+            <Key size={18} />
+          </button>
           <button className="icon-btn disconnect" onClick={onDisconnect} title="Disconnect Voice">
             <Volume2 size={18} />
           </button>

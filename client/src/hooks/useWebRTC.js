@@ -122,7 +122,6 @@ export default function useWebRTC(socket, currentVoiceRoom) {
 
       const handleSignal = async ({ senderSocketId, senderUser, signalData }) => {
         let peerContext = peersRef.current[senderSocketId];
-        
         if (!peerContext) {
           peerContext = createPeer(senderSocketId, senderUser, localStreamRef.current, false);
         }
@@ -131,37 +130,39 @@ export default function useWebRTC(socket, currentVoiceRoom) {
 
         try {
           if (signalData.type === 'offer') {
-            await pc.setRemoteDescription(new RTCSessionDescription(signalData));
+            if (pc.signalingState !== 'stable') {
+                await Promise.all([
+                  pc.setLocalDescription({type: 'rollback'}),
+                  pc.setRemoteDescription(new RTCSessionDescription(signalData))
+                ]);
+            } else {
+              await pc.setRemoteDescription(new RTCSessionDescription(signalData));
+            }
             const answer = await pc.createAnswer();
             await pc.setLocalDescription(answer);
             socket.emit('voice_signal', { targetSocketId: senderSocketId, signalData: pc.localDescription });
-            
-            // Process buffered candidates
-            if (candidateQueues[senderSocketId]) {
-              for (const cand of candidateQueues[senderSocketId]) {
-                await pc.addIceCandidate(new RTCIceCandidate(cand));
-              }
-              delete candidateQueues[senderSocketId];
-            }
           } else if (signalData.type === 'answer') {
             await pc.setRemoteDescription(new RTCSessionDescription(signalData));
-             // Process buffered candidates
-             if (candidateQueues[senderSocketId]) {
-              for (const cand of candidateQueues[senderSocketId]) {
-                await pc.addIceCandidate(new RTCIceCandidate(cand));
-              }
-              delete candidateQueues[senderSocketId];
-            }
           } else if (signalData.candidate) {
-            if (pc.remoteDescription) {
+            try {
               await pc.addIceCandidate(new RTCIceCandidate(signalData));
-            } else {
-              if (!candidateQueues[senderSocketId]) candidateQueues[senderSocketId] = [];
-              candidateQueues[senderSocketId].push(signalData);
+            } catch (e) {
+              if (!pc.remoteDescription) {
+                 if (!candidateQueues[senderSocketId]) candidateQueues[senderSocketId] = [];
+                 candidateQueues[senderSocketId].push(signalData);
+              }
             }
           }
+          
+          // Process queue if just became stable
+          if (pc.remoteDescription && candidateQueues[senderSocketId]) {
+            for (const cand of candidateQueues[senderSocketId]) {
+              await pc.addIceCandidate(new RTCIceCandidate(cand));
+            }
+            delete candidateQueues[senderSocketId];
+          }
         } catch (e) {
-          console.error("Signaling error:", e);
+          console.error("Critical signaling error:", e);
         }
       };
 

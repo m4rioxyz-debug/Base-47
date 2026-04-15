@@ -30,18 +30,11 @@ export default function AudioRenderer({ stream, volume, onSpeakingChange }) {
           }
           
           analyzer.getByteFrequencyData(dataArray);
-          // Calculate average volume
           let sum = 0;
-          for (let i = 0; i < dataArray.length; i++) {
-            sum += dataArray[i];
-          }
+          for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
           const average = sum / dataArray.length;
           
-          if (average > 10) {
-            onSpeakingChange(true);
-          } else {
-            onSpeakingChange(false);
-          }
+          onSpeakingChange(average > 12);
           animationFrameRef.current = requestAnimationFrame(checkSpeaking);
         };
         
