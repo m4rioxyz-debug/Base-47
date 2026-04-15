@@ -7,7 +7,7 @@ import MembersPanel from './components/MembersPanel';
 import { requestDesktopNotifications } from './utils/audioSystem';
 import './App.css';
 
-const SOCKET_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+const SOCKET_URL = import.meta.env.PROD ? undefined : 'http://localhost:3001';
 
 export default function App() {
   const [socket, setSocket] = useState(null);
