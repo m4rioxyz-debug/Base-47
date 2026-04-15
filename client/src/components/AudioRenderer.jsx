@@ -25,6 +25,10 @@ export default function AudioRenderer({ stream, volume, onSpeakingChange }) {
         const dataArray = new Uint8Array(analyzer.frequencyBinCount);
         
         const checkSpeaking = () => {
+          if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          
           analyzer.getByteFrequencyData(dataArray);
           // Calculate average volume
           let sum = 0;
@@ -56,8 +60,12 @@ export default function AudioRenderer({ stream, volume, onSpeakingChange }) {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume ?? 1.0;
+      // In some cases, resetting the volume helps trigger a play state
+      if (audioRef.current.paused && stream) {
+         audioRef.current.play().catch(() => {});
+      }
     }
-  }, [volume]);
+  }, [volume, stream]);
 
-  return <audio ref={audioRef} autoPlay playsInline style={{ display: 'none' }} />;
+  return <audio ref={audioRef} autoPlay playsInline muted={false} style={{ display: 'none' }} />;
 }
