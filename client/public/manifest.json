@@ -1,0 +1,17 @@
+{
+  "name": "Base 47",
+  "short_name": "Base47",
+  "description": "Private Real-Time Chat & Voice Hub",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1e1f22",
+  "theme_color": "#5865f2",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/2111/2111370.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

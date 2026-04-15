@@ -113,6 +113,11 @@ export default function Sidebar({ room, user, onLogout, isConnected, isOpen, onC
           </div>
         </div>
         <div className="user-actions">
+          {installPrompt && (
+            <button className="icon-btn install-btn" onClick={handleInstallClick} title="Install App">
+              <Download size={18} />
+            </button>
+          )}
           <button className="icon-btn" onClick={onLogout} title="Disconnect">
             <LogOut size={18} />
           </button>
